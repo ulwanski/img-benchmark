@@ -43,21 +43,20 @@ function makeThumbnail($sourcefile, $endfile, $thumbwidth, $thumbheight, $qualit
         $divisor = $height / $thumbheight;
         $newwidth = floor( $width / $divisor );
     }
+  
+  // Create a new temporary image.
+  $tmpimg = imagecreatetruecolor( $newwidth, $newheight );
+
+  // Copy and resize old image into new image.
+  fastimagecopyresampled( $tmpimg, $img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height );
+
+  // Save thumbnail into a file.
+  imagejpeg( $tmpimg, $endfile, $quality);
+
+  // release the memory
+  imagedestroy($tmpimg);
+  imagedestroy($img);
 }
-
-// Create a new temporary image.
-$tmpimg = imagecreatetruecolor( $newwidth, $newheight );
-
-// Copy and resize old image into new image.
-fastimagecopyresampled( $tmpimg, $img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height );
-
-// Save thumbnail into a file.
-imagejpeg( $tmpimg, $endfile, $quality);
-
-// release the memory
-imagedestroy($tmpimg);
-imagedestroy($img);
-
 
 
 
