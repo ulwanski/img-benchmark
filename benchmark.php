@@ -2,6 +2,8 @@
 require_once "./vendor/autoload.php";
 use \Eventviva\ImageResize;
 
+ini_set('gd.jpeg_ignore_warning', true);
+
 function fastimagecopyresampled (&$dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h, $quality = 3) {
   // Plug-and-Play fastimagecopyresampled function replaces much slower imagecopyresampled.
   // Just include this function and change all "imagecopyresampled" references to "fastimagecopyresampled".
@@ -43,7 +45,7 @@ function makeThumbnail($sourcefile, $endfile, $thumbwidth, $thumbheight, $qualit
         $divisor = $height / $thumbheight;
         $newwidth = floor( $width / $divisor );
     }
-  
+
   // Create a new temporary image.
   $tmpimg = imagecreatetruecolor( $newwidth, $newheight );
 
@@ -63,7 +65,7 @@ function makeThumbnail($sourcefile, $endfile, $thumbwidth, $thumbheight, $qualit
 echo "Starting image resize benchmark ...\n\r";
 
 $column1len = 30;
-$column2len = 10;
+$column2len = 15;
 
 foreach (new DirectoryIterator(__DIR__."/images") as $file) {
     if ($file->isFile()){
@@ -71,7 +73,7 @@ foreach (new DirectoryIterator(__DIR__."/images") as $file) {
         echo '|'.str_repeat('-', $column1len).'|'.str_repeat('-', $column2len)."|\n\r";
         echo '| '.$file->getFilename().str_repeat(' ', $column1len - strlen($file->getFilename()) - 1).'|';
 
-        $loops = 6;
+        $loops = 12;
         $allTime = 0;
         for($i = 0; $i < $loops; $i++){
             $time = microtime(true);
@@ -81,7 +83,7 @@ foreach (new DirectoryIterator(__DIR__."/images") as $file) {
             //$image->save('./tmp/thumb_'.$file->getFilename());
             $allTime += (microtime(true) - $time);
         }
-        $endTime = round($allTime/$loops, 3)."s";
+        $endTime = round(($allTime/$loops)*1000, 1)." ms";
         echo " $endTime ".str_repeat(' ', $column2len - strlen($endTime) - 3)." |\n\r";
     }
 }
